@@ -35,7 +35,7 @@
 
 `https://cem8837.github.io/Shoko_Dial_MidQC_Remaining/`
 
-首次部署時，請在儲存庫的 **Settings → Pages** 將 **Build and deployment** 的來源設為 **GitHub Actions**。
+此儲存庫已將 **Settings → Pages → Build and deployment** 的來源設為 **GitHub Actions**。若複製到其他儲存庫，請先設定相同來源。
 
 ## 測試
 
