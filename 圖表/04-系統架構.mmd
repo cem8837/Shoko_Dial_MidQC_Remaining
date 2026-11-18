@@ -1,0 +1,46 @@
+flowchart TB
+    subgraph USERS[使用者]
+        U1[中檢人員]
+        U2[生產經理／生管經理]
+        U3[總經理／系統管理者]
+    end
+
+    subgraph CLIENT[瀏覽器前端]
+        UI[HTML + CSS + Bootstrap 介面]
+        JS[JavaScript 表單檢核與互動]
+        UI --- JS
+    end
+
+    subgraph APP[PHP 後端應用程式]
+        AUTH[登入與角色權限]
+        LOT[LOT 與中檢登錄]
+        RULE[良品累計、門檻與狀態判斷]
+        ACTION[處置回覆與升級規則]
+        REPORT[待處理清單、報表與歷程]
+        NOTICE[通知管理]
+    end
+
+    DB[(MySQL／MariaDB<br/>LOT、中檢、處置、使用者、通知)]
+    CRON[排程工作<br/>逾期提醒／通知重試（可選）]
+    CHANNEL[系統內通知／待辦<br/>Email（可擴充）]
+
+    U1 --> UI
+    U2 --> UI
+    U3 --> UI
+    UI -->|HTTP 請求／頁面資料| AUTH
+    JS -->|表單資料| LOT
+    AUTH --> LOT
+    LOT --> RULE
+    RULE --> ACTION
+    ACTION --> REPORT
+    RULE --> NOTICE
+    ACTION --> NOTICE
+    LOT <--> DB
+    RULE <--> DB
+    ACTION <--> DB
+    REPORT <--> DB
+    NOTICE <--> DB
+    CRON --> NOTICE
+    NOTICE --> CHANNEL
+    CHANNEL --> U2
+    CHANNEL --> U3

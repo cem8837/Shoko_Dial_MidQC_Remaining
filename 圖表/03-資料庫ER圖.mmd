@@ -1,0 +1,103 @@
+erDiagram
+    USERS ||--o{ LOTS : creates
+    USERS ||--o{ INSPECTIONS : records
+    LOTS ||--o{ INSPECTIONS : has
+    USERS ||--o{ DISPOSITIONS : replies
+    LOTS ||--o{ DISPOSITIONS : tracks
+    INSPECTIONS o|--o{ DISPOSITIONS : relates_to
+    LOTS ||--o{ NOTIFICATIONS : generates
+    USERS ||--o{ NOTIFICATIONS : receives
+    NOTIFICATIONS ||--o{ NOTIFICATION_RESPONSES : has_replies
+    USERS ||--o{ NOTIFICATION_RESPONSES : responds
+    USERS o|--o{ NOTIFICATION_RESPONSES : follows_up
+    NOTIFICATIONS o|--o{ NOTIFICATIONS : parent_escalation
+    NOTIFICATION_RESPONSES o|--o| NOTIFICATIONS : may_escalate_to
+    LOTS ||--o{ LOT_STATUS_HISTORY : changes
+    USERS o|--o{ LOT_STATUS_HISTORY : changes_by
+    USERS o|--o{ APP_SETTINGS : updates
+
+    USERS {
+        bigint user_id PK
+        string employee_no UK
+        string full_name
+        string department
+        string role_code
+        string account UK
+        string password_hash
+        boolean active
+    }
+    LOTS {
+        bigint lot_id PK
+        string lot_code UK
+        string product_code
+        string work_order
+        int print_good_threshold
+        string status
+        datetime first_pending_at
+        datetime first_ready_at
+        int repeated_failure_count
+    }
+    INSPECTIONS {
+        bigint inspection_id PK
+        bigint lot_id FK
+        bigint inspector_id FK
+        datetime inspected_at
+        int newly_good_qty
+        int repair_or_rework_qty
+        int defect_qty
+        string note
+    }
+    DISPOSITIONS {
+        bigint disposition_id PK
+        bigint lot_id FK
+        bigint related_inspection_id FK
+        bigint responder_id FK
+        int round_no
+        string escalation_level
+        string action_text
+        string owner_name
+        string progress_status
+        date expected_at
+    }
+    NOTIFICATIONS {
+        bigint notification_id PK
+        bigint lot_id FK
+        bigint recipient_user_id FK
+        bigint parent_notification_id FK
+        string recipient_role_code
+        string escalation_from_role
+        string notification_level
+        string event_key
+        string reason
+        datetime sent_at
+        datetime read_at
+    }
+    NOTIFICATION_RESPONSES {
+        bigint response_id PK
+        bigint notification_id FK
+        bigint responder_id FK
+        bigint followed_up_by FK
+        bigint escalated_notification_id FK
+        string responder_role_code
+        string progress_text
+        date expected_completion_date
+        string response_status
+        datetime responded_at
+        datetime followed_up_at
+        string followup_note
+    }
+    LOT_STATUS_HISTORY {
+        bigint history_id PK
+        bigint lot_id FK
+        bigint changed_by FK
+        string old_status
+        string new_status
+        string reason
+        datetime changed_at
+    }
+    APP_SETTINGS {
+        string setting_key PK
+        string setting_value
+        bigint updated_by FK
+        datetime updated_at
+    }

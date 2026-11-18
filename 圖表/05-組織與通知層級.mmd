@@ -1,0 +1,21 @@
+flowchart LR
+    subgraph H[主管鏈（由上而下）]
+        direction TB
+        CH[董事長] --> GM[總經理]
+        GM --> VP[生產副總]
+        VP --> PM[生產經理]
+        PM --> SEC[課長]
+        SEC --> STOCK[股長]
+        STOCK --> TEAM[組長]
+        PM ---|同層協同追蹤| PCM[生管經理]
+    end
+
+    subgraph W[通知回覆與升級規則]
+        direction TB
+        LOT[中檢工管待處理 LOT] --> FIRST[第一層通知：生產經理＋生管經理協同]
+        FIRST --> RESPONSE[主管回覆：處置進度＋預計完成日]
+        RESPONSE --> TRACK[後續人工追蹤承諾結果]
+        TRACK -->|已達成| DONE[保存已達成結果]
+        TRACK -->|明確未達成| ESC[通知回覆角色的上一級；沿左側主管鏈反向逐級升級]
+        LOT -.既有獨立暫定展示規則.-> REPEAT[重檢未達設定次數後通知總經理]
+    end

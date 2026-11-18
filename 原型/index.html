@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>中檢工管 LOT 追蹤系統｜展示原型</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">L</div>
+        <div><strong>LOT FLOW</strong>
+          <small>中檢工管追蹤系統</small>
+        </div>
+      </div>
+      <div class="side-label">工作台</div>
+      <nav class="side-nav" aria-label="主要導覽">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">▦</span>
+          總覽
+        </button>
+        <button class="nav-item" data-view="lots">
+          <span class="nav-icon">▤</span>
+          LOT 追蹤
+          <span class="nav-count" id="pendingNavCount">0</span>
+        </button>
+        <button class="nav-item" data-view="alerts">
+          <span class="nav-icon">◉</span>
+          通知紀錄
+          <span class="nav-dot"></span>
+        </button>
+        <button class="nav-item" data-view="reports">
+          <span class="nav-icon">▥</span>
+          報表摘要
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="demo-note">
+          <span class="demo-bulb">i</span>
+          <div>
+            <strong>展示資料</strong>
+            <p>這是前端原型，資料只存在此瀏覽器。</p>
+          </div>
+        </div>
+        <button class="nav-item" id="settingsButton"><span class="nav-icon">⚙</span>系統規則設定</button>
+        <div class="profile">
+          <div class="avatar">中</div>
+          <div>
+            <strong>中檢工管示範帳號</strong>
+            <small>角色模擬：專題展示</small>
+          </div>
+          <span class="profile-menu">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb-line">
+          <span>工作台</span>
+          <span class="crumb-sep">/</span>
+          <strong id="pageCrumb">總覽</strong>
+        </div>
+        <div class="topbar-right">
+          <span class="date-label" id="todayLabel"></span>
+          <span class="topbar-sep"></span>
+          <span class="status-pill"><i></i>展示原型</span>
+          <button class="icon-button" id="settingsTopButton" aria-label="系統規則設定">⚙</button>
+        </div>
+      </header>
+
+      <section class="page-view active" id="view-dashboard">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">中檢工管工作台</p>
+            <h1>中殘未完成停滯LOT管制。</h1>
+            <p class="page-subtitle">
+              掌握累計良品、印刷投入門檻與中檢停滯，讓每一批都有負責人與下一步。
+            </p>
+          </div>
+          <div class="heading-actions">
+            <button class="btn btn-outline-secondary" id="exportBtn">匯出 CSV</button>
+            <button class="btn btn-primary" id="addInspectionBtn">
+              <span class="plus">＋</span>
+              新增中檢紀錄
+            </button>
+          </div>
+        </div>
+        <div class="provisional-banner">
+          <span>暫定展示規則</span>
+          升級門檻與急迫天數可在「系統規則設定」調整；正式上線前請由工廠確認。
+        </div>
+        <div class="kpi-grid">
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span>待處理 LOT</span>
+              <span class="kpi-icon amber">◷</span>
+            </div>
+            <div class="kpi-number" id="kpiPending">0</div>
+            <div class="kpi-foot">
+              <span class="accent-amber" id="kpiUrgent">0 件急迫</span>
+              <span>中殘不足</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span>累計新增良品</span>
+              <span class="kpi-icon blue">▤</span>
+            </div>
+            <div class="kpi-number" id="kpiGood">0</div>
+            <div class="kpi-foot">
+              <span class="accent-blue">所有 LOT 合計</span>
+              <span>件</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span>可移動印刷</span>
+              <span class="kpi-icon green">✓</span>
+            </div>
+            <div class="kpi-number" id="kpiReady">0</div>
+            <div class="kpi-foot">
+              <span class="accent-green" id="kpiRate">0%</span>
+              <span>可移動印刷</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span>升級總經理</span>
+              <span class="kpi-icon red">↗</span>
+            </div>
+            <div class="kpi-number" id="kpiEscalated">0</div>
+            <div class="kpi-foot">
+              <span class="accent-red">中殘未完停滯</span>
+              <span>待決策案件</span>
+            </div>
+          </article>
+        </div>
+        <div class="content-grid">
+          <section class="panel panel-main">
+            <div class="panel-heading">
+              <div>
+                <div class="panel-title">待處理 LOT</div>
+                <div class="panel-caption">優先顯示久候、重複處置與急迫案件</div>
+              </div>
+              <button class="text-button" data-go="lots">
+                查看全部
+                <span>→</span>
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table lot-table">
+                <thead>
+                  <tr>
+                    <th>MO / 品番</th>
+                    <th>累計良品 / 中殘</th>
+                    <th>等待</th>
+                    <th>負責人 / 處置</th>
+                    <th>急迫性</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardLotRows"></tbody>
+              </table>
+            </div>
+            <div class="empty-state d-none" id="dashboardEmpty">
+              目前沒有待處理 LOT，新增中檢紀錄後會自動更新。
+            </div>
+          </section>
+          <section class="panel panel-alerts">
+            <div class="panel-heading">
+              <div>
+                <div class="panel-title">需要留意</div>
+                <div class="panel-caption">依等待天數與處置輪次整理</div>
+              </div>
+              <span class="live-mark">展示</span>
+            </div>
+            <div id="attentionList" class="attention-list"></div>
+            <button class="outline-wide" data-go="alerts">查看通知紀錄</button>
+          </section>
+        </div>
+        <section class="panel summary-panel">
+          <div class="panel-heading">
+            <div>
+              <div class="panel-title">LOT 移轉進度</div>
+              <div class="panel-caption">以目前建立的展示 LOT 計算；不代表實際工廠績效</div>
+            </div>
+            <span class="summary-period">全部展示資料</span>
+          </div>
+          <div class="progress-overview">
+            <div class="progress-big">
+              <div class="progress-ring" id="progressRing">
+                <div>
+                  <strong id="progressPercent">0%</strong>
+                  <small>中殘完成 LOT</small>
+                </div>
+              </div>
+              <div class="progress-copy">
+                <strong id="progressReadyCount">0 / 0 LOT 已達中殘</strong>
+                <span>達標定義：累計新增良品數 ≥ 該 LOT 中殘</span>
+              </div>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-stat">
+              <small>中檢集約良品累計</small>
+              <strong id="pendingGood">0 <em>件</em></strong>
+            </div>
+            <div class="summary-stat">
+              <small>距中殘尚差</small>
+              <strong id="pendingGap">0 <em>件</em></strong>
+            </div>
+            <div class="summary-stat">
+              <small>停滯最久</small>
+              <strong id="longestWait">0 <em>天</em></strong>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page-view" id="view-lots">
+        <div class="page-heading compact-heading">
+          <div>
+            <p class="eyebrow">追蹤清單</p>
+            <h1>LOT 追蹤</h1>
+            <p class="page-subtitle">
+              每次中檢只登錄「本次新增良品」，系統自動累加並重新判斷。
+            </p>
+          </div>
+          <div class="heading-actions">
+            <button class="btn btn-outline-secondary" id="exportLotsBtn">匯出 CSV</button>
+            <button class="btn btn-primary" id="addInspectionBtn2">＋ 新增中檢紀錄</button>
+          </div>
+        </div>
+
+        <section class="panel filter-panel">
+          <div class="filter-controls">
+            <div class="search-box">
+              <span>⌕</span>
+              <input id="searchInput" type="search" placeholder="搜尋 LOT、品番或負責人">
+            </div>
+            <select id="statusFilter" class="form-select">
+              <option value="all">全部狀態</option>
+              <option value="pending">中檢工管待處理</option>
+              <option value="ready">可投入印刷</option>
+            </select>
+            <select id="urgencyFilter" class="form-select">
+              <option value="all">全部急迫性</option>
+              <option value="urgent">至急</option>
+              <option value="watch">注意</option>
+              <option value="normal">一般</option>
+            </select>
+            <span class="filter-result" id="filterResult"></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="table-responsive">
+            <table class="table lot-table full-table">
+              <thead>
+                <tr>
+                  <th>LOT / 品番 / 移動票</th>
+                  <th>良品數 / 中殘</th>
+                  <th>中殘</th>
+                  <th>等待天數</th>
+                  <th>負責人</th>
+                  <th>再中檢未達</th>
+                  <th>急迫性</th>
+                  <th>狀態 / 操作</th>
+                </tr>
+              </thead>
+              <tbody id="allLotRows"></tbody>
+            </table>
+          </div>
+          <div class="empty-state d-none" id="allEmpty">沒有符合條件的 LOT。</div>
+        </section>
+      </section>
+
+      <section class="page-view" id="view-alerts">
+        <div class="page-heading compact-heading">
+          <div>
+            <p class="eyebrow">通知與處置歷程</p>
+            <h1>通知紀錄</h1>
+            <p class="page-subtitle">
+              主管可記錄進度與預計完成日，之後追蹤達成與否；明確未達成時逐級通知上一級。
+            </p>
+          </div>
+          <button class="btn btn-outline-secondary" id="clearNoticeBtn">
+            清除無回覆歷程的已讀通知
+          </button>
+        </div>
+        <div class="workflow-banner">
+          <p>
+            <strong>主管鏈（由上而下）：</strong>
+            董事長 → 總經理 → 生產副總 → 生產經理 → 課長 → 股長 → 組長。
+          </p>
+          <p>回覆未達成時，依主管鏈反向逐級升級。生管經理與生產經理會協同追蹤。</p>
+          <p>此原型只在瀏覽器內記錄展示通知，不會實際寄送 Email 或進行推播。</p>
+        </div>
+        <section class="panel">
+          <div class="notification-list" id="notificationList"></div>
+          <div class="empty-state d-none" id="notificationEmpty">目前沒有通知紀錄。</div>
+        </section>
+      </section>
+
+      <section class="page-view" id="view-reports">
+        <div class="page-heading compact-heading">
+          <div>
+            <p class="eyebrow">管理摘要</p>
+            <h1>報表摘要</h1>
+            <p class="page-subtitle">
+              供課堂展示的累計良品與待處理概況；正式 KPI 定義需由工廠確認。
+            </p>
+          </div>
+          <button class="btn btn-primary" id="exportReportBtn">下載 LOT 明細 CSV</button>
+        </div>
+        <div class="report-grid">
+          <section class="panel">
+            <div class="panel-title">待處理追蹤摘要</div>
+            <div class="report-row">
+              <span>待處理 LOT 數</span>
+              <strong id="reportPending">0</strong>
+            </div>
+            <div class="report-row">
+              <span>待處理累計新增良品數</span>
+              <strong id="reportGood">0</strong>
+            </div>
+            <div class="report-row">
+              <span>中殘</span>
+              <strong id="reportGap">0</strong>
+            </div>
+            <div class="report-row">
+              <span>修理後中殘未完 LOT 數</span>
+              <strong id="reportRepeated">0</strong>
+            </div>
+            <div class="report-row">
+              <span>升級總經理 LOT 數</span>
+              <strong id="reportEscalated">0</strong>
+            </div>
+            <div class="report-row">
+              <span>已回覆、待追蹤結果</span>
+              <strong id="reportFollowupWaiting">0</strong>
+            </div>
+            <div class="report-row">
+              <span>回覆未達成案件</span>
+              <strong id="reportNotAchieved">0</strong>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-title">指標定義</div>
+            <ul class="definition-list">
+              <li><strong>累計新增良品：</strong>同一 LOT 每筆中檢「本次新增良品數」加總。</li>
+              <li><strong>差額：</strong>移轉門檻減累計良品數，最低顯示為 0。</li>
+              <li><strong>等待天數：</strong>自首日中殘未完計算；中殘完後停止累計。</li>
+              <li><strong>重檢未達：</strong>首次中殘未完修理後再次中檢，累計仍不足的次數。</li>
+              <li><strong>升級通知：</strong>修理送檢次數門檻是可調整的暫定展示規則；明確回覆未達成則另按主管鏈逐級升級。</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+      <footer class="footer-note">
+        中檢工管待處理 LOT 自動追蹤與升級通知系統
+        <span>｜課堂展示原型・非正式生產系統</span>
+      </footer>
+    </main>
+  </div>
+
+  <dialog class="app-dialog" id="inspectionDialog">
+    <form method="dialog" id="inspectionForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">中檢紀錄</p>
+          <h2>新增一次中檢</h2>
+          <p>只輸入這次新增加入累計的良品數，不要重複輸入過往良品。</p>
+        </div>
+        <button class="dialog-close" id="closeInspectionDialog" type="button" aria-label="關閉">×</button>
+      </div>
+      <div class="dialog-body">
+        <label class="form-label">
+          選擇／輸入 LOT
+          <div class="lot-search">
+            <input
+              class="form-control"
+              id="inspectionLotSearch"
+              type="search"
+              role="combobox"
+              aria-autocomplete="list"
+              aria-haspopup="listbox"
+              aria-controls="inspectionLotResults"
+              aria-expanded="false"
+              autocomplete="off"
+              required
+              placeholder="輸入 LOT 編號，顯示相符結果">
+            <div
+              class="lot-search-results"
+              id="inspectionLotResults"
+              role="listbox"
+              hidden></div>
+          </div>
+          <input type="hidden" id="inspectionLot">
+        </label>
+        <div class="form-grid">
+          <label class="form-label">
+            本次新增良品數
+            <input class="form-control" id="newGoodQty" type="number" min="0" step="1" required placeholder="例如 120">
+          </label>
+          <label class="form-label">
+            本次檢查數（選填）
+            <input class="form-control" id="inspectedQty" type="number" min="0" step="1" placeholder="例如 200">
+          </label>
+          <label class="form-label">
+            待修／再仕掛數（選填）
+            <input class="form-control" id="repairQty" type="number" min="0" step="1" placeholder="例如 80">
+          </label>
+          <label class="form-label">
+            不良數（選填）
+            <input class="form-control" id="defectQty" type="number" min="0" step="1" placeholder="例如 10">
+          </label>
+        </div>
+        <label class="form-label">
+          備註
+          <textarea class="form-control" id="inspectionNote" rows="3" placeholder="檢查結果或待處理原因"></textarea>
+        </label>
+        <div class="form-hint">
+          系統會將本次新增良品數加總，並自動判斷是否達到此 LOT 投入印刷門檻。
+        </div>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-outline-secondary" id="cancelInspectionDialog" type="button">取消</button>
+        <button class="btn btn-primary" id="saveInspectionBtn" value="default">儲存中檢紀錄</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="app-dialog" id="dispositionDialog">
+    <form method="dialog" id="dispositionForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">處置與負責人</p>
+          <h2>更新處置進度</h2>
+          <p>記錄下一步、負責人與預計完成日期。</p>
+        </div>
+        <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+      </div>
+      <div class="dialog-body">
+        <label class="form-label">
+          選擇 LOT
+          <select class="form-select" id="dispositionLot" required></select>
+        </label>
+        <label class="form-label">
+          處置方式
+          <input class="form-control" id="actionText" required placeholder="例如：安排修理後再送中檢">
+        </label>
+        <div class="form-grid">
+          <label class="form-label">
+            負責人
+            <input class="form-control" id="ownerName" required placeholder="姓名／職稱">
+          </label>
+          <label class="form-label">
+            目前進度
+            <select class="form-select" id="progressStatus">
+              <option>待安排</option>
+              <option>處理中</option>
+              <option>等待再檢</option>
+              <option>已完成處置</option>
+            </select>
+          </label>
+          <label class="form-label">
+            預計完成日
+            <input class="form-control" id="expectedDate" type="date">
+          </label>
+        </div>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-outline-secondary" value="cancel">取消</button>
+        <button class="btn btn-primary" id="saveDispositionBtn" value="default">儲存處置</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="app-dialog" id="detailDialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">LOT 明細</p>
+        <h2 id="detailTitle">LOT 明細</h2>
+        <p id="detailSubtitle"></p>
+      </div>
+      <button class="dialog-close" id="closeDetail" aria-label="關閉">×</button>
+    </div>
+    <div class="dialog-body" id="detailBody"></div>
+    <div class="dialog-foot">
+      <button class="btn btn-outline-secondary" id="closeDetail2">關閉</button>
+      <button class="btn btn-primary" id="detailAddDisposition">更新處置</button>
+    </div>
+  </dialog>
+
+  <dialog class="app-dialog" id="notificationActionDialog">
+    <form method="dialog" id="notificationActionForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">通知處置追蹤</p>
+          <h2 id="notificationActionTitle">記錄通知處置回覆</h2>
+          <p id="notificationActionIntro"></p>
+        </div>
+        <button class="dialog-close" id="closeNotificationAction" type="button" aria-label="關閉">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="form-hint mb-3" id="notificationActionSummary"></div>
+        <div id="replyFields">
+          <label class="form-label">
+            回覆主管層級
+            <select class="form-select" id="replyRole" required></select>
+          </label>
+          <label class="form-label">
+            目前進度
+            <textarea class="form-control" id="replyProgress" rows="3" required placeholder="簡要記錄已採取的處置與目前進度"></textarea>
+          </label>
+          <label class="form-label">
+            預計完成日
+            <input class="form-control" id="replyExpectedDate" type="date" required>
+          </label>
+        </div>
+        <div id="followupFields" class="d-none">
+          <p class="followup-summary" id="followupSummary"></p>
+          <label class="form-label">
+            承諾結果
+            <select class="form-select" id="followupOutcome">
+              <option value="">請選擇結果</option>
+              <option value="ACHIEVED">中殘完</option>
+              <option value="NOT_ACHIEVED">中殘未完（通知上一級主管）</option>
+            </select>
+          </label>
+          <label class="form-label">
+            追蹤說明（選填）
+            <textarea class="form-control" id="followupNote" rows="3" placeholder="例如：確認日期、未達成原因或後續安排"></textarea>
+          </label>
+        </div>
+        <div class="form-hint">
+          中殘停滯的升級依董事長 → 總經理 → 生產副總 → 生產經理 → 課長 → 股長 → 組長主管鏈向上逐級進行；
+          本原型只新增瀏覽器內展示紀錄，不會實際傳送通知。
+        </div>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-outline-secondary" type="button" id="cancelNotificationAction"
+          onclick="document.getElementById('notificationActionDialog').close()">取消</button>
+        <button class="btn btn-primary" type="submit" id="notificationActionSubmit">儲存回覆</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="app-dialog narrow-dialog" id="settingsDialog">
+    <form method="dialog" id="settingsForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">展示參數</p>
+          <h2>系統規則設定</h2>
+          <p>此處數值是專題展示初始值，正式使用前請確認現場規則。</p>
+        </div>
+        <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+      </div>
+      <div class="dialog-body">
+        <label class="form-label">
+          重檢累計仍未完成幾次後升級總經理
+          <input class="form-control" id="escalationThreshold" type="number" min="1" max="10" required>
+        </label>
+        <div class="form-grid">
+          <label class="form-label">
+            注意：等待幾天
+            <input class="form-control" id="watchDays" type="number" min="1" required>
+          </label>
+          <label class="form-label">
+            至急：等待幾天
+            <input class="form-control" id="urgentDays" type="number" min="2" required>
+          </label>
+        </div>
+        <p class="form-hint">
+          升級次數與等待天數均是暫定展示值；正式系統需由管理者維護參數並留下異動人與時間。
+        </p>
+        <button class="btn btn-sm btn-outline-danger" id="resetDemoBtn" type="button">
+          重設展示資料
+        </button>
+      </div>
+      <div class="dialog-foot">
+        <button class="btn btn-outline-secondary" value="cancel">取消</button>
+        <button class="btn btn-primary" id="saveSettingsBtn" value="default">儲存設定</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
